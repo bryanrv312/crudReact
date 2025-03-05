@@ -67,21 +67,40 @@ function App() {
   }
 
   const deleteEmple = (val) => {
-    Axios.delete(`http://localhost:3001/delete/${val.id}`, {
-    //Axios.delete("http://localhost:3001/delete/" + id, {
-    }).then(() => {
-      getEmpleados();
-      limpiarCampos();
-      Swal.fire({
-        title: '<strong>Eliminar</strong>',
-        html: '<i>Eliminar a <strong>' + val.nombre + '</strong> ?</i>',
-        buttons: ["No", "Sí"],  //[0, 1] = [fasle, true]
-        icon: 'warning'
-      }).then(res => {
-        if(res){
 
-        }
-      });
+    Swal.fire({
+      title: "Estas seguro de eliminar?",
+      html: '<i>Eliminar a <strong>' + val.nombre + '</strong> ?</i>',
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminarlo!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        //Axios.delete("http://localhost:3001/delete/" + id, {
+        Axios.delete(`http://localhost:3001/delete/${val.id}`).then(() => {
+          getEmpleados();
+          limpiarCampos();
+
+          Swal.fire({
+            text: val.nombre + " fue Eliminado",
+            icon: 'success',
+            timer: 3000
+          });
+        }).catch(function(error){
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "No se logró eliminar el registro!",
+            footer: JSON.parse(JSON.stringify(error)).message === "Network Error" ?
+             "Intente más tarde" : JSON.parse(JSON.stringify(error)).message 
+          });
+        });
+        
+      }
+  
     });
   }
 
